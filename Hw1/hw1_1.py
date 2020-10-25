@@ -10,9 +10,6 @@ target_dir = 'Q1_Image'
 
 
 def corner_detection():
-    # 储存棋盘格角点的世界坐标和图像坐标对
-    objpoints = []  # 在世界坐标系中的三维点
-    imgpoints = []  # 在图像平面的二维点
     for img_path in os.listdir(target_dir):
         if not img_path.endswith(('.jpg', '.bmp', '.png', '.JPG')):
             continue
@@ -21,9 +18,6 @@ def corner_detection():
         img = cv2.imread(img_dir)
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         ret, corners = cv2.findChessboardCorners(gray, (11, 8), None)
-        if ret:
-            objpoints.append(objp)
-            imgpoints.append(corners)
         criteria = (cv2.TERM_CRITERIA_MAX_ITER | cv2.TERM_CRITERIA_EPS, 30, 0.001)
         corners2 = cv2.cornerSubPix(gray, corners, (11, 11), (-1, -1), criteria)  # 亞像素精確定位角點位置
         cv2.drawChessboardCorners(img, (11, 8), corners2, ret)  # 圖上繪製檢測到的角點
@@ -33,6 +27,10 @@ def corner_detection():
             os.makedirs(write_dir)
         write_path = os.path.join(write_dir, img_path)
         cv2.imwrite(write_path, img)
+        img = cv2.resize(img, (768, 768))
+        cv2.imshow(img_path, img)
+        cv2.waitKey()
+        cv2.destroyAllWindows()
 
 
 def intrinsic():
